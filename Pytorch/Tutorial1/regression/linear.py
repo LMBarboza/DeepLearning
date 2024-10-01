@@ -3,6 +3,7 @@ import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
+from torch.optim.optimizer import Optimizer
 
 
 def gen_data(n: int = 100, noise: float = 0.2) -> tuple:
@@ -23,7 +24,7 @@ class LinReg(nn.Module):
 def train_model(
     model: nn.Module,
     fnLoss: nn.Module,
-    optimizer: optim.optimizer.Optimizer,
+    optimizer: Optimizer,
     X_train: torch.Tensor,
     y_train: torch.Tensor,
     epochs: int = 500,
@@ -62,7 +63,7 @@ def main():
 
     loss = nn.MSELoss()
 
-    optimizer = optim.sgd.SGD(model.parameters(), lr=0.1)
+    optimizer = optim.SGD(model.parameters(), lr=0.01)
     train_model(model, loss, optimizer, x_tensor, y_tensor, epochs=500)
 
     with torch.no_grad():
