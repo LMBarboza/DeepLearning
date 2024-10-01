@@ -12,6 +12,13 @@ def gen_data(n: int = 100, noise: float = 0.2) -> tuple:
     return x, y
 
 
+# def gen_data(n: int = 100, features: int = 3, noise: float = 0.2) -> tuple:
+#    X = np.random.randn(n, features)
+#    w = np.array([1.5, -2.0, 3.0])
+#    y = X @ w + 1.0 + noise * np.random.randn(n)
+#    return X, y
+
+
 class LinReg(nn.Module):
     def __init__(self) -> None:
         super().__init__()
@@ -69,7 +76,7 @@ def main():
     with torch.no_grad():
         y_pred = model(x_tensor).numpy()
 
-    plot(x_tensor.numpy(), y_tensor.numpy(), y_pred)
+    # plot(x_tensor.numpy(), y_tensor.numpy(), y_pred)
 
 
 if __name__ == "__main__":
