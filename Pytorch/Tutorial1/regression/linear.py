@@ -60,7 +60,7 @@ def main():
 
     print(model)
 
-    loss = nn.CrossEntropyLoss()
+    loss = nn.MSELoss()
 
     optimizer = optim.sgd.SGD(model.parameters(), lr=0.1)
     train_model(model, loss, optimizer, x_tensor, y_tensor, epochs=500)
