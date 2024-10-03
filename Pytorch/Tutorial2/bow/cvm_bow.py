@@ -32,13 +32,15 @@ class NeuralNetwork(nn.Module):
 
 class Data(Dataset):
     def __init__(self, path: str) -> None:
-        self.df = pd.read_csv(path)
+        df = pd.read_csv(path)
+        self.labels = torch.tensor(df["doc_categoria"].values, dtype=torch.long)
+        self.features = torch.tensor(df.iloc[:, :-1].values, dtype=torch.float32)
 
-    def __len__(self):
-        pass
+    def __len__(self) -> int:
+        return len(self.labels)
 
-    def __getitem__(self, index):
-        return super().__getitem__(index)
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.features[idx], self.labels[idx]
 
 
 def train(
@@ -66,18 +68,17 @@ def train(
         avg_loss = total_loss / len(dataloader)
         print(f"Epoch: {epoch+1}/{epochs}, Loss: {avg_loss:.4f}")
 
-        accuracy = evaluate(model, testDataloader)
+        accuracy = evaluate(model, testDataloader, device)
         print(f"Epoch {epoch+1}/{epochs}, Test Accuracy: {accuracy:.2f}%")
 
 
-def evaluate(model: nn.Module, dataloader: DataLoader) -> float:
+def evaluate(model: nn.Module, dataloader: DataLoader, device) -> float:
     model.eval()
     correct = 0
     total = 0
     with torch.no_grad():
         for _, (inputs, targets) in enumerate(dataloader):
-            inputs, targets = inputs, targets
-            inputs = inputs.view(-1, 28 * 28)
+            inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
             _, predicted = torch.max(outputs.data, 1)
             total += targets.size(0)
@@ -111,20 +112,10 @@ def main() -> None:
     else:
         device = torch.device("cpu")
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
-    )
-
-    train_dataset = datasets.MNIST(
-        root="./data", train=True, download=True, transform=transform
-    )
-
-    test_dataset = datasets.MNIST(
-        root="./data", train=False, download=True, transform=transform
-    )
-
+    train_dataset = Data("data/noticias_final_tfidf_df_300.csv")
+    # gerar dados treino
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+    test_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
     model = NeuralNetwork(300, 2).to(device)
 
