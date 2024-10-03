@@ -7,7 +7,9 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+
 .Python
+Pytorch/*/*/data/
 build/
 develop-eggs/
 dist/
