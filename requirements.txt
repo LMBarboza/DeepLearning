@@ -1,4 +1,5 @@
 anyio==4.4.0
+kaggle
 scikit-learn
 argon2-cffi==23.1.0
 argon2-cffi-bindings==21.2.0
